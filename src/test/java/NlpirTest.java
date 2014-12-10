@@ -1,6 +1,12 @@
+import com.google.common.io.Resources;
 import com.lingjoin.divideWords.NlpirMethod;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class NlpirTest {
 	Logger logger= Logger.getLogger(NlpirTest.class.getName());
@@ -9,31 +15,31 @@ public class NlpirTest {
 	/**
 	 * 分词测试
 	 */
-    public void testParticiple(){
-        System.out.println(ClassLoader.getSystemResource("a.txt").getPath());
+    public void testParticiple() throws IOException {
     	NlpirMethod.Nlpir_init();
-    	String sSrc=FileOperateUtils.getFileContent(ClassLoader.getSystemResource("a.txt").getPath());
+
+        String sSrc = IOUtils.toString(Resources.getResource("test.txt"));
+
     	logger.debug("文章内容为---->"+sSrc);
     	String data= NlpirMethod.NLPIR_ParagraphProcess(sSrc, 1);
-//    	FileOperateUtils.writeFile(data, "E:\\灵玖\\国防科技大学\\国防科大测试语料\\听out.txt");
     	logger.debug(data);
     }
 	@Test
-	public void testKeyWord(){
+	public void testKeyWord() throws IOException {
 		NlpirMethod.Nlpir_init();
-    	String sSrc=FileOperateUtils.getFileContent("E:\\灵玖\\国防科技大学\\国防科大测试语料\\乱.txt");
+
+        String sSrc = IOUtils.toString(Resources.getResource("word_seg_test.txt"));
     	logger.debug("文章内容为---->"+sSrc);
     	String data= NlpirMethod.NLPIR_GetKeyWords(sSrc, 10, false);
-//    	FileOperateUtils.writeFile(data, "E:\\灵玖\\国防科技大学\\国防科大测试语料\\听out.txt");
     	logger.debug(data);
 	}
 	@Test
-	public void testNewWord(){
+	public void testNewWord() throws IOException {
 		NlpirMethod.Nlpir_init();
-    	String sSrc=FileOperateUtils.getFileContent("C:\\Users\\Administrator.KODQ5W6UHGL6CP8\\Desktop\\ICTCLAS&NLPIR_Windows\\test.txt");
-    	logger.debug("文章内容为---->"+sSrc);
+        String sSrc = IOUtils.toString(Resources.getResource("word_seg_test.txt"));
+
+        logger.debug("文章内容为---->"+sSrc);
     	String data= NlpirMethod.NLPIR_GetNewWords(sSrc, 10, false);
-//    	FileOperateUtils.writeFile(data, "E:\\灵玖\\国防科技大学\\国防科大测试语料\\听out.txt");
     	logger.debug(data);
 	}
 	@Test
