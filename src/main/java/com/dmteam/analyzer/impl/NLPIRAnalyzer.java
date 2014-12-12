@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2014/12/10.
  */
-public class NLPIRAnalyzer implements Analyzer {
+public class NLPIRAnalyzer extends AbstracAnalyzer {
 
     private static final Logger logger = LoggerFactory.getLogger(NLPIRAnalyzer.class);
 
@@ -66,15 +66,16 @@ public class NLPIRAnalyzer implements Analyzer {
 
         for (String t : tokens) {
 
-            if (StringUtils.isEmpty(t)) continue;
-
-            // TODO
-            Word w = new Word();
-
             String[] parts = StringUtils.split(t, "/");
 
-            w.content = parts[0];
+            if (parts == null || parts.length < 2) continue;
 
+            Word w = new Word(parts[0]);
+
+            if (isIgnored(w)) continue;
+
+
+            // TODO add other info
             w.POS = parts[1];
 
             words.add(w);

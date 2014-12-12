@@ -22,4 +22,11 @@ public interface Analyzer {
      * @return
      */
     Analyzer setConfig(AnalyzerConfig config);
+
+    /**
+     * 是否是不关注的词
+     * @param w
+     * @return
+     */
+    boolean isIgnored(Word w);
 }

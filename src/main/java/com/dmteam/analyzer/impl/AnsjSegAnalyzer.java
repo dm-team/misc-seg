@@ -13,11 +13,11 @@ import java.util.List;
 /**
  * Created by Administrator on 2014/12/10.
  */
-public class AnsjSegAnalyzer implements Analyzer {
+public class AnsjSegAnalyzer extends AbstracAnalyzer {
 
     private AnalyzerConfig config = null;
 
-    enum ATYPE {
+    public enum ATYPE {
         BASE, TO, NLP
     }
 
@@ -66,7 +66,8 @@ public class AnsjSegAnalyzer implements Analyzer {
 
         for (Term t : l) {
 
-            Word w = new Word();
+            Word w = new Word(t.getRealName());
+            if (isIgnored(w)) continue;
 
             // TODO
             w.content = t.getRealName();
