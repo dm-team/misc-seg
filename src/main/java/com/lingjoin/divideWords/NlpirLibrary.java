@@ -1,6 +1,6 @@
 package com.lingjoin.divideWords;
 
-import com.dmteam.config.SystemConfig;
+import com.dmteam.system.SystemConfig;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 

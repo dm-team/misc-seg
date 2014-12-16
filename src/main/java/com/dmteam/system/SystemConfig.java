@@ -1,13 +1,16 @@
-package com.dmteam.config;
+package com.dmteam.system;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Created by Administrator on 2014/12/8.
  */
 public class SystemConfig {
+
+    public final static Charset SYSTEM_CHARSET = Charset.forName("utf-8");
 
     private final static String WINDOWS = "windows";
 
