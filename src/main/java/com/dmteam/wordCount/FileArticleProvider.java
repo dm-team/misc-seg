@@ -1,5 +1,6 @@
 package com.dmteam.wordCount;
 
+import com.dmteam.ControllableBgTask;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,7 +18,7 @@ import java.util.concurrent.*;
 /**
  * Created by xh on 2014/12/12.
  */
-public class FileArticleProvider implements ArticleProvider, Runnable {
+public class FileArticleProvider extends ControllableBgTask implements ArticleProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(FileArticleProvider.class);
 
@@ -27,21 +28,24 @@ public class FileArticleProvider implements ArticleProvider, Runnable {
 
     private String dirPath;
 
-    private ScheduledExecutorService schedule;
-
     private ExecutorService readFilePool;
 
+    private boolean stop;
+
+    @Override
+    public void stop() {
+        stop = true;
+        readFilePool.shutdown();
+        super.interrupt();
+    }
+
     public FileArticleProvider(String dirPath) {
+        super(FileArticleProvider.class.getName());
         this.dirPath = dirPath;
         this.buffer = new ArrayBlockingQueue<Pair<String, String>>(DEFAULT_BUFFER_SIZE);
 
-        this.schedule = Executors.newScheduledThreadPool(1);
+        // 最多两个线程同时读磁盘
         this.readFilePool = Executors.newFixedThreadPool(2);
-    }
-
-    @Override
-    public void start() {
-        this.schedule.scheduleAtFixedRate(this, 1L, 3 * 1000L, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -49,8 +53,9 @@ public class FileArticleProvider implements ArticleProvider, Runnable {
         try {
             return buffer.take();
         } catch (InterruptedException e) {
+            // if interrupted, notice the caller to stop with "null"
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -68,29 +73,41 @@ public class FileArticleProvider implements ArticleProvider, Runnable {
     @Override
     public void run() {
 
-        if (buffer.remainingCapacity() == 0) return;
+        while (!stop && !Thread.interrupted()) {
 
-        final int needload = buffer.remainingCapacity();
-
-        File dir = new File(dirPath);
-
-        File[] files = dir.listFiles(new FilenameFilter() {
-
-            int n = needload;
-
-            @Override
-            public boolean accept(File dir, String name) {
-                if (n <= 0) return false;
-
-                if (!name.endsWith(".ctt")) return false;
-
-                n--;
-                return true;
+            if (buffer.remainingCapacity() == 0) {
+                sleep(3000);
+                continue;
             }
-        });
 
+            final int needload = buffer.remainingCapacity();
 
-        parallelNIORead(files);
+            File dir = new File(dirPath);
+
+            File[] files = dir.listFiles(new FilenameFilter() {
+
+                int n = needload;
+
+                @Override
+                public boolean accept(File dir, String name) {
+                    if (n <= 0) return false;
+
+                    if (!name.endsWith(".ctt")) return false;
+
+                    n--;
+                    return true;
+                }
+            });
+
+            if (files.length == 0) {
+                sleep(3000);
+                continue;
+            }
+
+            parallelNIORead(files);
+
+        }
+
     }
 
 
@@ -141,6 +158,14 @@ public class FileArticleProvider implements ArticleProvider, Runnable {
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
+        }
+    }
+
+    private void sleep(long m) {
+        try {
+            Thread.sleep(m);
+        } catch (InterruptedException e) {
+            stop = true;
         }
     }
 }

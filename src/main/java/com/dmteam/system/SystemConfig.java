@@ -1,20 +1,56 @@
 package com.dmteam.system;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Properties;
 
 /**
  * Created by Administrator on 2014/12/8.
  */
 public class SystemConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(SystemConfig.class);
+
     public final static Charset SYSTEM_CHARSET = Charset.forName("utf-8");
 
     private final static String WINDOWS = "windows";
 
     private final static String LINUX = "linux";
+
+    private static final Properties config = new Properties();
+
+    public static final File CONFIG_DIR;
+
+    public static final File SYSTEM_HOME_DIR;
+
+    static {
+
+        if (System.getProperty("path.home") != null) {
+            SYSTEM_HOME_DIR = new File(System.getProperty("path.home"));
+        } else {
+            SYSTEM_HOME_DIR = new File(System.getProperty("user.dir"));
+        }
+
+        CONFIG_DIR = new File(SYSTEM_HOME_DIR, "config");
+
+        File configFile = new File(CONFIG_DIR, "systemconfig.properties");
+        try {
+            config.load(new FileInputStream(configFile));
+        } catch (IOException e) {
+            logger.error("load config file: " + configFile.getAbsolutePath() +" failed!");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String wordSegType() {
+
+        String s = config.getProperty("WORD_SEG");
+        if (s == null) return "AnsjSeg";
+        return s;
+    }
 
     public static String NLPIRModuleName() {
 

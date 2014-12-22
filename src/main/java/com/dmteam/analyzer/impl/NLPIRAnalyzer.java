@@ -20,7 +20,9 @@ public class NLPIRAnalyzer extends AbstracAnalyzer {
 
     private static boolean NLPIR_INIT = false;
 
-    private AnalyzerConfig config = null;
+    public NLPIRAnalyzer() {
+        super.config = new AnalyzerConfig().addExtConfig(AnsjSegAnalyzer.TYPE, AnsjSegAnalyzer.ATYPE.NLP);
+    }
 
     @Override
     public List<Word> segmentWords(String content) {

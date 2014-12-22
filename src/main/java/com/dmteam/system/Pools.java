@@ -2,6 +2,7 @@ package com.dmteam.system;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +27,7 @@ public class Pools {
                 cpuNum * 2,
                 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<Runnable>(cpuNum * 4),
+                new BasicThreadFactory.Builder().namingPattern("wordSegPool-%d").daemon(false).build(),
                 new ThreadPoolExecutor.CallerRunsPolicy());
     }
 

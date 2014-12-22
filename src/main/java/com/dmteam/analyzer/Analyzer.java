@@ -24,6 +24,12 @@ public interface Analyzer {
     Analyzer setConfig(AnalyzerConfig config);
 
     /**
+     * 获取 Analyzer 的相关配置
+     * @return
+     */
+    AnalyzerConfig getConfig();
+
+    /**
      * 是否是不关注的词
      * @param w
      * @return

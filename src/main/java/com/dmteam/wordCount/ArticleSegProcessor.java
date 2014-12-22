@@ -1,5 +1,6 @@
 package com.dmteam.wordCount;
 
+import com.dmteam.ControllableBgTask;
 import com.dmteam.system.Pools;
 import com.dmteam.analyzer.Analyzer;
 import com.dmteam.analyzer.impl.Word;
@@ -11,7 +12,7 @@ import java.util.List;
  * 文本分词统计处理线程
  * Created by xh on 2014/12/15.
  */
-public class ArticleSegProcessor implements Runnable {
+public class ArticleSegProcessor extends ControllableBgTask {
 
     private final Analyzer a;
 
@@ -22,6 +23,7 @@ public class ArticleSegProcessor implements Runnable {
     private ArticleProvider articleProvider;
 
     public ArticleSegProcessor(Analyzer a, ArticleProvider articleProvider) {
+        super(ArticleSegProcessor.class.getName());
         this.a = a;
         this.wc = new WordCounter();
         this.articleProvider = articleProvider;
@@ -47,8 +49,10 @@ public class ArticleSegProcessor implements Runnable {
 
     }
 
+    @Override
     public void stop() {
         stop = true;
+        super.interrupt();
     }
 
     /**

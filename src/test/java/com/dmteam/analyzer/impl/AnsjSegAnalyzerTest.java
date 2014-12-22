@@ -16,12 +16,9 @@ public class AnsjSegAnalyzerTest {
     @Test
     public void wordSegment() throws IOException {
 
-
         AnalyzerConfig config = new AnalyzerConfig().addExtConfig(AnsjSegAnalyzer.TYPE, AnsjSegAnalyzer.ATYPE.NLP);
 
-
         Analyzer a = Analyzers.create(Analyzers.T.ANSJ_SEG).setConfig(config);
-
 
         List<Word> words = a.segmentWords(IOUtils.toString(Resources.getResource("word_seg_test.txt")));
 

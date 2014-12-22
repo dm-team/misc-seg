@@ -10,12 +10,17 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstracAnalyzer implements Analyzer {
 
-    private AnalyzerConfig config = null;
+    protected AnalyzerConfig config = null;
 
     @Override
     public Analyzer setConfig(AnalyzerConfig config) {
         this.config = config;
         return this;
+    }
+
+    @Override
+    public AnalyzerConfig getConfig() {
+        return this.config;
     }
 
     @Override

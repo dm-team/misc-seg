@@ -15,13 +15,16 @@ import java.util.List;
  */
 public class AnsjSegAnalyzer extends AbstracAnalyzer {
 
-    private AnalyzerConfig config = null;
-
     public enum ATYPE {
         BASE, TO, NLP
     }
 
     public static final String TYPE = "TYPE";
+
+    public AnsjSegAnalyzer() {
+        super.config = new AnalyzerConfig().addExtConfig(AnsjSegAnalyzer.TYPE, AnsjSegAnalyzer.ATYPE.NLP);
+    }
+
 
     @Override
     public List<Word> segmentWords(String content) {
